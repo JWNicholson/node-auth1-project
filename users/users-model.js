@@ -1,43 +1,25 @@
-const db = require('../data/db-Config');
+const db = require('../data/db-config.js');
 
 module.exports = {
-    get,
-    getBy,
-    getById,
-    add,
-    getUserProfile
+    getUsers,
+    createUser,
+    findUserById,
+    findBy
 }
 
-function get(){
-    return db('users').select('id','username', 'password')
-}
-
-function getBy(filter) {
+function getUsers(){
     return db('users')
-        .select('id', 'username', 'password')
-        .where(filter);
 }
 
-function getById(id) {
+function createUser(user){
     return db('users')
-        .select('id', 'username')
-        .where({id})
-        .first();
+    .insert(user)
 }
 
-function add(user) {
-    return db('users')
-        .insert(user, 'id')
-        .then(ids => {
-            const [id] = ids;
-            return getById(id);
-        });
+function findUserById(id){
+    return db('users').where({id : id}).first()
 }
 
-function getUserProfile(id) {
-    return db('profile')
-        .join('users', 'profile.user_id', 'users.id')
-        .select('users.username', 'profile.name', 'profile.favorite_food as favorite food', 'profile.quote')
-        .where({user_id: id})
-        .first();
+function findBy(username){
+    return db('users').where({username});
 }
